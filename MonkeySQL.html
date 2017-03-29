@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="testjs.js"></script>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header"> <a class="navbar-brand" href="#">Monkeys</a> </div>
+            <ul class="nav navbar-nav">
+                <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Login<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a>
+                                <label for="usr">Name:</label>
+                                <input type="text" class="form-control" id="usr"> </a>
+                        </li>
+                        <li>
+                            <a>
+                                <label for="pwd">Password:</label>
+                                <input type="password" class="form-control" id="pwd"> </a>
+                        </li>
+                        <li>
+                            <a>
+                                <button type="button" class="btn btn-success" id="logInOrOut" onClick="logInOrOut(usr.value,pwd.value)">Login</button>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tables
+        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" id="tabs"> </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="test"> </div> <img src="MonkeyCoin.png" alt="Monkey" style="width:10%;height:10%;">
+    <div onClick="highrise()">Click for Highrise</div>
+    <div onClick="setBackGroundInfo()">Click to test update background info</div>
+    <div onClick="testHighRiseAPI()">Click to test api</div>
+    <div id="high"></div>
+</body>
+
+</html>
