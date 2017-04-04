@@ -1,8 +1,8 @@
 <?php
+include 'MonkeyPHPLibrary.php';
+$usr = $_POST["un"];
+$pwd = $_POST["pw"];
 
-$usr = $_REQUEST["usr"];
-$pwd = $_REQUEST["pwd"];
-if ($usr == "monkey" && $pwd == "madness"){
 $servername = "report.c27qodfdwt2r.us-east-1.rds.amazonaws.com";
 $username = "webarc";
 $password = "2F5BPWgt4fd3";
@@ -33,9 +33,7 @@ if ($result->num_rows > 0) {
       echo "</a></li>";
 }
 $conn->close();    
-} else {
-    echo "Wrong username or password.";
-}
+
 
 
 ?>

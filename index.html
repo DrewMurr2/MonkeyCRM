@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <!--CMD SHT B opens in CHROME-->
+<!--CMD SHT B opens in CHROME-->
+<!--SHFT ALT F formats page-->
+ 
 <body>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -8,11 +10,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="testjs.js"></script>
-    <script src="queryDB.js"></script>
+    <script src="CRM.js"></script>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-            <div class="navbar-header"><img class="gb_6b" src="https://www.google.com/a/cpanel/legalmonkeys.com/images/logo.gif?service=google_default" style="max-width:144px;max-height:48px">
+            <div class="navbar-header"><img class="gb_6b" src="https://www.google.com/a/cpanel/legalmonkeys.com/images/logo.gif?service=google_default"
+                    style="max-width:144px;max-height:48px">
                 <a class="navbar-brand" href="#"></a>
             </div>
             <ul class="nav navbar-nav">
@@ -35,38 +37,28 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tables
-        <span class="caret"></span></a>
-                    <ul class="dropdown-menu" id="tabs"> </ul>
-                </li>
-                <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Query
-        <span class="caret"></span></a>
-                    <ul class="dropdown-menu" id="tabs">
-                        <li><a onClick="query('Drew')">Drews DB</a></li>
-                        <li><a onClick="query('LM')">Legal Monkeys DB</a></li>
-                    </ul>
-                </li>
+
                 <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
         <span class="caret"></span></a>
                     <ul class="dropdown-menu" id="tabs">
-                        <li><a onClick="clientConnectInfo('Highrise')">Client Connect Customer Info from Highrise</a></li>
-                        <li><a onClick="clientConnectInfo('LM')">Client Connect Customer Info from LM DB</a></li>
-                        <li><a onClick="clientConnectInfo('Drews')">Client Connect Customer Info from Drews DB</a></li>
-                        <li><a onClick="clientConnectInfo('All')">Client Connect Customer Info from All</a></li>
+                        <li><a onClick="clientConnectInfo('Highrise')">Overview of period</a></li>
+                        <li><a onClick="clientConnectInfo('LM')">Detail of period</a></li>
+                        <li><a onClick="clientConnectInfo('Drews')">Payment history of period</a></li>
+                        <li><a onClick="clientConnectInfo('Drews')">Overview of date</a></li>
                     </ul>
                 </li>
-                <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Highrise
+                <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort By
         <span class="caret"></span></a>
                     <ul class="dropdown-menu" id="tabs">
-                        <li><a onClick="compileCases()">Cases</a></li>
-                        <li><a onClick="compileCases()">Firms</a></li>
-                        <li><a onClick="compileCases()">People</a></li>
+                        <li><a onClick="compileCases()">Closest to finish line.</a></li>
+                        <li><a onClick="compileCases()">Farthest behind.</a></li>
+                        <li><a onClick="compileCases()">Longest since last contact.</a></li>
+                        <li><a onClick="compileCases()">Next follow up date.</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
     </nav>
-    <a href="https://legalmonkeys.highrisehq.com/kases/1215744-aaron-sachs" target="_blank"></a>
     <!-- Query Modal -->
     <div id="QueryModal" db="none" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -74,7 +66,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Query</h4> </div>
+                    <h4 class="modal-title">Query</h4>
+                </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <textarea class="form-control" rows="5" id="query"></textarea>
@@ -87,12 +80,7 @@
             </div>
         </div>
     </div>
-    <!--
-    <div onClick="highrise()">Click for Highrise</div>
-<div onClick="setBackGroundInfo()">Click to test update background info</div>
-<div onClick="testHighRiseAPI()">Click to test api</div>
-<div id="high"></div>
--->
+
 </body>
 
 </html>

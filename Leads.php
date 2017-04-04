@@ -19,7 +19,7 @@ curl_close ($ch);
 }
 
     
-$xmlstr = get_xml_from_url("https://legalmonkeys.highrisehq.com/kases/open.xml",$token);
+$xmlstr = get_xml_from_url("https://legalmonkeys.highrisehq.com/companies.xml?tag=Lead",$token);
 
 $xmlobj = new SimpleXMLElement($xmlstr);
 echo '{"data":[' . json_encode($xmlobj) . ']}' 
