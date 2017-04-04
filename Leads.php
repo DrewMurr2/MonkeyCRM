@@ -1,4 +1,6 @@
 <?php
+ header("Access-Control-Allow-Origin: *");
+
 $token = '09b1d28b10c0c242bd3a898bd8da72a7';//$_REQUEST["token"];
 function get_xml_from_url($URL,$token){
 $username=$token;

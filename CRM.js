@@ -38,19 +38,25 @@ function call(url, additional, callback) {
     });
 }
 
+function getLeads(){
+call('Leads.php', undefined,function(){
 
 
-function getLeads() {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var JSO = JSON.parse(this.responseText)
-            console.log(JSO)
-        }
-    };
-    xmlhttp.open("GET", "Leads.php");
-    xmlhttp.send();
+})
+
 }
+
+// function getLeads() {
+//     var xmlhttp = new XMLHttpRequest();
+//     xmlhttp.onreadystatechange = function () {
+//         if (this.readyState == 4 && this.status == 200) {
+//             var JSO = JSON.parse(this.responseText)
+//             console.log(JSO)
+//         }
+//     };
+//     xmlhttp.open("GET", "Leads.php");
+//     xmlhttp.send();
+// }
 var highRiseClientConnectCaseObj = {
     caseID: 1215744
     , VisibleBackgroundInfo: undefined
