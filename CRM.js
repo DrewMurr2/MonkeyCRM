@@ -40,16 +40,10 @@ function getLeads() {
         var companies = data.data[0].company
         companies.forEach(function (company) {
             retrieveObject(company, function (objec) {
-                // if (company.name.includes('Martin')|| company.name.includes('Schwartz')|| company.name.includes('Fox')) {
-                //     leads.push(new lead(company))
-                // } else {
-                    obj = ParseJSON(objec)
-                    if (obj.data[0].obj) leads.push(new lead(company, obj.data[0].obj))
-                    else leads.push(new lead(company))
-                //}
+                obj = ParseJSON(objec)
+                if (obj.data[0].obj) leads.push(new lead(company, obj.data[0].obj))
+                else leads.push(new lead(company))
             })
-        })
-        companies.forEach(function (company) {
         })
     })
 }
@@ -89,7 +83,7 @@ function lead(company, obj) {
     }
 
     if (!obj) this.createObj()
-
+    this.show()
 
     function phase(options) {
         this.name = options.name || null,
@@ -109,6 +103,38 @@ lead.prototype.createObj = function () {
     })
 }
 
+var leadNum = 0
+
+lead.prototype.show = function () {
+    var parent = $(document.getElementById('accordion'))
+
+    function createProgressBar(parent) {
+        var progressBar = '<div class="progress">'
+        var percent = (100-(0.2 * (parent.Phases.length + 1))) / parent.Phases.length
+        parent.Phases.forEach(function (phase) {
+            progressBar += '<div class="progress-bar progress-bar-warning" role="progressbar" style="width:0.2%"></div>'
+            progressBar += '<div class="progress-bar progress-bar-success" role="progressbar" style="width:' + percent + '%">' + phase.name + '</div>'
+        })
+        progressBar += '<div class="progress-bar progress-bar-warning" role="progressbar" style="width:0.2%"></div>'
+        progressBar += '</div>'
+        return progressBar
+    }
+// //   <h4 class="panel-title">\</h4>\
+    var newPanel = '<div class="panel panel-default">\
+    <div class="panel-heading">\
+       <div  style="width:10%;position:relative;overflow:hidden"><a data-toggle="collapse" data-parent="#accordion" href="#collapse' + ++leadNum + '">' + this.name + '</a></div><div  style="width:90%;position:relative;float:right"> \
+      ' + createProgressBar(this) + '</div>\
+    </div>\
+    <div id="collapse' + leadNum + '" class="panel-collapse collapse">\
+      <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,\
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\
+      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
+      commodo consequat.</div>\
+    </div>\
+  </div>'
+    parent.append(newPanel)
+}
+
 function retrieveObject(company, callback) {
     call('http://clientconnectcrm.azurewebsites.net/leadObj.php', { id: company.id }, function (obj) {
         callback(obj)
@@ -123,9 +149,9 @@ function ParseJSON(str) {
     return JSON.parse(newStr)
 }
 
-function StringJSON(obj){
+function StringJSON(obj) {
     var str = JSON.stringify(obj)
-    return replaceAll(str,"&", "AND")
+    return replaceAll(str, "&", "AND")
 }
 function replaceAll(str, find, replace) {
     function escapeRegExp(str) {
