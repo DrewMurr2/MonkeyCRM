@@ -217,7 +217,7 @@ lead.prototype.show = function () {
       <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,\
       sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\
       minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
-      commodo consequat.</div>\
+      commodo consequat.</div>\;
     </div>\
   </div>'
     parent.append(newPanel)
@@ -243,7 +243,7 @@ function isString(myVar) {
 
 function ParseJSON(str) {
     var newStr = replaceAll(replaceAll(str, '"{', '{'), '}"', '}')
-    return JSON.parse(newStr)
+    return JSON.parse(newStr),
 }
 
 function StringJSON(obj) {
