@@ -89,7 +89,7 @@ function saveDate(id, phase) {
 function removeDate(id, phase) {
     var thisLead = fromNumber(id)
     if (phase) {
-        var ind = thisLead.Phases.indexOf(phase)
+        var ind = thisLead.indexOfPhase(phase)
         console.log(ind)
         thisLead.Phases[ind].start = null
         if(ind)thisLead.Phases[ind - 1].end = null

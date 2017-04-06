@@ -119,7 +119,20 @@ lead.prototype.show = function () {
         return progressBar
     }
 
-
+function createContent(parent){
+var content = '<div class="row">\
+    <div class="col-sm-4" >\
+      <p>Lorem ipsum...</p>\
+    </div>\
+    <div class="col-sm-4">\
+      <p>Sed ut perspiciatis...</p>\
+    </div>\
+       <div class="col-sm-4" >\
+      <p>Sed ut perspiciatis...</p>\
+    </div>\
+  </div>'
+  return content
+}
 
     // //   <h4 class="panel-title">\</h4>\
     var newPanel = '<div class="panel panel-default">\
@@ -131,8 +144,9 @@ lead.prototype.show = function () {
             <div class="col-sm-10">\
                     ' + createProgressBar(this) + '\
             </div>\
-        </div>\
-    </div>\
+        </div>'
+        newPanel += createContent(this)
+    newPanel += '</div>\
     <div id="collapse' + leadNum + '" class="panel-collapse collapse">\
       <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,\
       sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\
@@ -141,5 +155,6 @@ lead.prototype.show = function () {
     </div>\
   </div>'
     parent.append(newPanel)
+
     this.refreshPhaseBar()
 }
