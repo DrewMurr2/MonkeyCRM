@@ -49,20 +49,20 @@ function lead(company, obj) {
             this.end = options.end || null,
             this.targetDuration = options.targetDuration || null
     }
-    this.retrieveNotes(this.orderNotes)
-    this.retrieveTasks(this.orderTasks)
+    this.retrieveNotes()
+    this.retrieveTasks()
 }
 
 lead.prototype.orderNotes = function () {
-        var parent = this
-        console.log(parent)
+    var parent = this
+    console.log(parent)
     for (i = 1; i < parent.hiddenProperties.notes.length; i++) {
         for (j = i; j > 0 && parent.hiddenProperties.notes[j].date > parent.hiddenProperties.notes[j - 1].date; j--) {
             parent.hiddenProperties.notes.splice(j - 1, 2, parent.hiddenProperties.notes[j], parent.hiddenProperties.notes[j - 1]);
         }
     }
-    $(document.getElementById('notedate')).html(new Date(parent.hiddenProperties.notes[0].date))
-    $(document.getElementById('notebody')).html(new Date(parent.hiddenProperties.notes[0].body))
+    $(document.getElementById('notedate' + parent.id)).html(new Date(parent.hiddenProperties.notes[0].date))
+    $(document.getElementById('notebody' + parent.id)).html(parent.hiddenProperties.notes[0].body)
 
 }
 
@@ -73,8 +73,8 @@ lead.prototype.orderTasks = function () {
             parent.hiddenProperties.tasks.splice(j - 1, 2, parent.hiddenProperties.tasks[j], parent.hiddenProperties.tasks[j - 1]);
         }
     }
-    $(document.getElementById('taskdate')).html(new Date(parent.hiddenProperties.tasks[0].date))
-    $(document.getElementById('taskbody')).html(new Date(parent.hiddenProperties.tasks[0].body))
+    $(document.getElementById('taskdate' + parent.id)).html(new Date(parent.hiddenProperties.tasks[0].date))
+    $(document.getElementById('taskbody' + parent.id)).html(parent.hiddenProperties.tasks[0].body)
 
 }
 
@@ -89,31 +89,36 @@ function task(raw) {
     if (raw['created-at']) this.date = new Date(raw['created-at'])
 }
 
-lead.prototype.retrieveNotes = function (callback) {
+lead.prototype.retrieveNotes = function () {
     var lead = this
     call('notes.php', { id: this.id, obj: StringJSON(this) }, function (obj) {
         var rawNotes = ParseJSON(obj).data[0].note
         lead.hiddenProperties.notes = []
-        rawNotes.forEach(function (raw) {
-            lead.hiddenProperties.notes.push(new note(raw))
-        })
-        callback()
+        if (rawNotes) {
+            if (rawNotes['created-at']) lead.hiddenProperties.notes.push(new note(rawNotes))
+            else rawNotes.forEach(function (raw) {
+                lead.hiddenProperties.notes.push(new note(raw))
+            })
+            lead.orderNotes()
+        }
     })
 }
 
 
-lead.prototype.retrieveTasks = function (callback) {
+lead.prototype.retrieveTasks = function () {
     var lead = this
     call('tasks.php', { id: this.id }, function (obj) {
         var taskSets = ParseJSON(obj).data
         lead.hiddenProperties.tasks = []
-        taskSets.forEach(function (taskSet) {
-            if (taskSet.task['created-at']) lead.hiddenProperties.tasks.push(new task(taskSet))
-            else taskSet.task.forEach(function (tasker) {
-                lead.hiddenProperties.tasks.push(new task(tasker))
+        if (taskSets) {
+            taskSets.forEach(function (taskSet) {
+                if (taskSet.task['created-at']) lead.hiddenProperties.tasks.push(new task(taskSet))
+                else taskSet.task.forEach(function (tasker) {
+                    lead.hiddenProperties.tasks.push(new task(tasker))
+                })
             })
-        })
-        callback()
+            lead.orderTasks()
+        }
     })
 }
 
@@ -209,24 +214,24 @@ lead.prototype.show = function () {
 
     function createContent(parent) {
         var content = '<div class="row">\
-    <div class="col-sm-2" >\
+  <div class="col-sm-1"  style="overflow:hidden;height:20px">\
       <p>Next task:</p>\
     </div>\
-    <div class="col-sm-2" >\
+    <div class="col-sm-1"  style="overflow:hidden;height:20px">\
       <p id="taskdate' + parent.id + '">date</p>\
     </div>\
-    <div class="col-sm-10" >\
+    <div class="col-sm-10" style="overflow:hidden;height:20px">\
       <p id="taskbody' + parent.id + '"></p>\
     </div>\
   </div>\
   <div class="row">\
-    <div class="col-sm-2" >\
+    <div class="col-sm-1"  style="overflow:hidden;height:40px">\
       <p>Last Note:</p>\
     </div>\
-    <div class="col-sm-2" >\
+    <div class="col-sm-1"  style="overflow:hidden;height:40px">\
       <p id="notedate' + parent.id + '">date</p>\
     </div>\
-    <div class="col-sm-10" >\
+    <div class="col-sm-10" style="overflow:hidden;height:40px">\
       <p id="notebody' + parent.id + '"></p>\
     </div>\
   </div>'
@@ -238,21 +243,16 @@ lead.prototype.show = function () {
     <div class="panel-heading">\
        <div class="row">\
             <div class="col-sm-2">\
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse' + ++leadNum + '">' + this.name + '</a>\
+                    <a href="https://legalmonkeys.highrisehq.com/companies/' + this.id + '" target="_blank">' + this.name + '</a>\
             </div>\
             <div class="col-sm-10">\
                     ' + createProgressBar(this) + '\
             </div>\
         </div>'
+    newPanel += '</div><div class="panel-body">'
     newPanel += createContent(this)
-    newPanel += '</div>\
-    <div id="collapse' + leadNum + '" class="panel-collapse collapse">\
-      <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,\
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\
-      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
-      commodo consequat.</div>\
-    </div>\
-  </div>'
+    newPanel += '</div></div>'
+
     parent.append(newPanel)
 
     this.refreshPhaseBar()
