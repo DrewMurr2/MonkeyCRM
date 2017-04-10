@@ -14,6 +14,14 @@ function logInOrOut(usr, pwd) {
     })
 }
 
+function daysBetween(one, another) {
+    return Math.round(Math.abs((+one) - (+another)) / 8.64e7);
+}
+
+function copyToClipboard(text) {
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+}
+
 function call(url, additional, callback) {
     var adparams = ""
     if (additional) {
@@ -92,7 +100,7 @@ function removeDate(id, phase) {
         var ind = thisLead.indexOfPhase(phase)
         console.log(ind)
         thisLead.Phases[ind].start = null
-        if(ind)thisLead.Phases[ind - 1].end = null
+        if (ind) thisLead.Phases[ind - 1].end = null
     } else {
         var phazez = thisLead.Phases
         phazez[phazez.length - 1].end = null

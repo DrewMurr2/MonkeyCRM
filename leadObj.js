@@ -32,6 +32,14 @@ function lead(company, obj) {
         this.Install.Phases.push(new phase({ name: "scheduleTraining", targetDuration: 2 }))
     }
 
+
+    if (obj && obj.extraProperties) this.extraProperties = obj.extraProperties
+    else this.extraProperties = {
+        source: "",
+    }
+
+    this.hiddenProperties = []
+
     if (!obj) this.createObj()
     this.show()
 
@@ -41,7 +49,72 @@ function lead(company, obj) {
             this.end = options.end || null,
             this.targetDuration = options.targetDuration || null
     }
+    this.retrieveNotes(this.orderNotes)
+    this.retrieveTasks(this.orderTasks)
+}
 
+lead.prototype.orderNotes = function () {
+        var parent = this
+        console.log(parent)
+    for (i = 1; i < parent.hiddenProperties.notes.length; i++) {
+        for (j = i; j > 0 && parent.hiddenProperties.notes[j].date > parent.hiddenProperties.notes[j - 1].date; j--) {
+            parent.hiddenProperties.notes.splice(j - 1, 2, parent.hiddenProperties.notes[j], parent.hiddenProperties.notes[j - 1]);
+        }
+    }
+    $(document.getElementById('notedate')).html(new Date(parent.hiddenProperties.notes[0].date))
+    $(document.getElementById('notebody')).html(new Date(parent.hiddenProperties.notes[0].body))
+
+}
+
+lead.prototype.orderTasks = function () {
+    var parent = this
+    for (i = 1; i < parent.hiddenProperties.tasks.length; i++) {
+        for (j = i; j > 0 && parent.hiddenProperties.tasks[j].date > parent.hiddenProperties.tasks[j - 1].date; j--) {
+            parent.hiddenProperties.tasks.splice(j - 1, 2, parent.hiddenProperties.tasks[j], parent.hiddenProperties.tasks[j - 1]);
+        }
+    }
+    $(document.getElementById('taskdate')).html(new Date(parent.hiddenProperties.tasks[0].date))
+    $(document.getElementById('taskbody')).html(new Date(parent.hiddenProperties.tasks[0].body))
+
+}
+
+
+function note(raw) {
+    if (raw.body) this.body = raw.body
+    if (raw['created-at']) this.date = new Date(raw['created-at'])
+}
+
+function task(raw) {
+    if (raw.body) this.body = raw.body
+    if (raw['created-at']) this.date = new Date(raw['created-at'])
+}
+
+lead.prototype.retrieveNotes = function (callback) {
+    var lead = this
+    call('notes.php', { id: this.id, obj: StringJSON(this) }, function (obj) {
+        var rawNotes = ParseJSON(obj).data[0].note
+        lead.hiddenProperties.notes = []
+        rawNotes.forEach(function (raw) {
+            lead.hiddenProperties.notes.push(new note(raw))
+        })
+        callback()
+    })
+}
+
+
+lead.prototype.retrieveTasks = function (callback) {
+    var lead = this
+    call('tasks.php', { id: this.id }, function (obj) {
+        var taskSets = ParseJSON(obj).data
+        lead.hiddenProperties.tasks = []
+        taskSets.forEach(function (taskSet) {
+            if (taskSet.task['created-at']) lead.hiddenProperties.tasks.push(new task(taskSet))
+            else taskSet.task.forEach(function (tasker) {
+                lead.hiddenProperties.tasks.push(new task(tasker))
+            })
+        })
+        callback()
+    })
 }
 
 lead.prototype.save = function () {
@@ -54,9 +127,24 @@ lead.prototype.refreshPhaseBar = function () {
         if (this.Phases[i].start) this.Phases[i - 1].end = this.Phases[i].start
     }
     for (i = 0; i < this.Phases.length; i++) {
-        if (!this.Phases[i].start) document.getElementById('progressBar' + this.id + this.Phases[i].name).className = "progress-bar greyback"
-        if (this.Phases[i].start && !this.Phases[i].end) document.getElementById('progressBar' + this.id + this.Phases[i].name).className = "progress-bar progress-bar-warning progress-bar-striped active"
-        if (this.Phases[i].start && this.Phases[i].end) document.getElementById('progressBar' + this.id + this.Phases[i].name).className = "progress-bar progress-bar-success"
+        var days = ""
+        var bar = document.getElementById('progressBar' + this.id + this.Phases[i].name)
+        var par = $(document.getElementById('par' + this.id + this.Phases[i].name))
+
+        if (!this.Phases[i].start) bar.className = "progress-bar greyback"
+        if (this.Phases[i].start && !this.Phases[i].end) {
+            days = this.Phases[i].targetDuration - daysBetween(new Date(), new Date(this.Phases[i].start))
+            if (days < 0) bar.className = "progress-bar progress-bar-danger progress-bar-striped active"
+            else bar.className = "progress-bar progress-bar-warning progress-bar-striped active"
+        }
+        if (this.Phases[i].start && this.Phases[i].end) {
+            days = this.Phases[i].targetDuration - daysBetween(new Date(this.Phases[i].end), new Date(this.Phases[i].start))
+            bar.className = "progress-bar progress-bar-success"
+        }
+        if (days) par.html('&#160&#160 ' + days)
+        else par.html('')
+        if (days < 0) par.css('color', 'red')
+        else par.css('color', 'black')
     }
 }
 
@@ -79,8 +167,8 @@ lead.prototype.phaseFromName = function (name) {
     }
 }
 
-lead.prototype.indexOfPhase = function(name){
-     for (i = 0; i < this.Phases.length; i++) {
+lead.prototype.indexOfPhase = function (name) {
+    for (i = 0; i < this.Phases.length; i++) {
         if (this.Phases[i].name == name) return i
     }
 }
@@ -94,45 +182,56 @@ lead.prototype.show = function () {
         var progressBar = '<div class="progress">'
         var percent = (100 - (dividerWidth * (parent.Phases.length + 1))) / parent.Phases.length
 
-        function returnPortion(inside1,inside2, otherProperty){
+        function returnPortion(inside1, inside2, otherProperty) {
             return '<div class="progress-bar" role="progressbar" style="width:' + dividerWidth + '%" onClick="setPhaseStartDate(' + inside1 + ')">\
                     <div id="dateWrapper' + inside2 + '" style="display:none;float:left;position:absolute' + otherProperty + '"><input type="date" style="color:black" id="datePicker' + inside2 + '" >\
                         <div style="background-color:grey" >\
                             <span style="background-color:grey" onClick="hideCal('+ inside1 + ')">cancel</span>\
-                            <span style="background-color:grey" onClick="removeDate('+ inside1 +')">remove</span>\
-                            <span  style="background-color:grey" onClick="saveDate('+ inside1 +')">save</span>\
+                            <span style="background-color:grey" onClick="removeDate('+ inside1 + ')">remove</span>\
+                            <span  style="background-color:grey" onClick="saveDate('+ inside1 + ')">save</span>\
                         </div >\
                      </div>\
                 </div>'
         }
         parent.Phases.forEach(function (phase) {
             //Below is the date picker appended to the beginning of each phase
-            progressBar += returnPortion(parent.id + ",'" + phase.name + "'",parent.id + phase.name,'')
+            progressBar += returnPortion(parent.id + ",'" + phase.name + "'", parent.id + phase.name, '')
             //Below is the actual portion of the progress bar
-            progressBar += '<div class="progress-bar greyback" id="progressBar' + parent.id + phase.name + '"  role="progressbar" style="width:' + percent + '%">' + phase.name + '</div>'
+            progressBar += '<div class="progress-bar greyback" id="progressBar' + parent.id + phase.name + '"  role="progressbar" style="width:' + percent + '%"><span>' + phase.name + '</span><span id=par' + parent.id + phase.name + '></span></div>'
         })
         //Below is the last date picker
-        progressBar += returnPortion(parent.id,parent.id,';right:10px')
-           
+        progressBar += returnPortion(parent.id, parent.id, ';right:10px')
+
         //The last div ends the progress bar
         progressBar += '</div>'
         return progressBar
     }
 
-function createContent(parent){
-var content = '<div class="row">\
-    <div class="col-sm-4" >\
-      <p>Lorem ipsum...</p>\
+    function createContent(parent) {
+        var content = '<div class="row">\
+    <div class="col-sm-2" >\
+      <p>Next task:</p>\
     </div>\
-    <div class="col-sm-4">\
-      <p>Sed ut perspiciatis...</p>\
+    <div class="col-sm-2" >\
+      <p id="taskdate' + parent.id + '">date</p>\
     </div>\
-       <div class="col-sm-4" >\
-      <p>Sed ut perspiciatis...</p>\
+    <div class="col-sm-10" >\
+      <p id="taskbody' + parent.id + '"></p>\
+    </div>\
+  </div>\
+  <div class="row">\
+    <div class="col-sm-2" >\
+      <p>Last Note:</p>\
+    </div>\
+    <div class="col-sm-2" >\
+      <p id="notedate' + parent.id + '">date</p>\
+    </div>\
+    <div class="col-sm-10" >\
+      <p id="notebody' + parent.id + '"></p>\
     </div>\
   </div>'
-  return content
-}
+        return content
+    }
 
     // //   <h4 class="panel-title">\</h4>\
     var newPanel = '<div class="panel panel-default">\
@@ -145,7 +244,7 @@ var content = '<div class="row">\
                     ' + createProgressBar(this) + '\
             </div>\
         </div>'
-        newPanel += createContent(this)
+    newPanel += createContent(this)
     newPanel += '</div>\
     <div id="collapse' + leadNum + '" class="panel-collapse collapse">\
       <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,\
