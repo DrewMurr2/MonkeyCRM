@@ -42,15 +42,15 @@ function lead(company, obj) {
 
     if (!obj) this.createObj()
     this.show()
-
+    this.retrieveNotes()
+    this.retrieveTasks()
     function phase(options) {
         this.name = options.name || null,
             this.start = options.start || null,
             this.end = options.end || null,
             this.targetDuration = options.targetDuration || null
     }
-    this.retrieveNotes()
-    this.retrieveTasks()
+
 }
 
 lead.prototype.orderNotes = function () {
@@ -61,9 +61,14 @@ lead.prototype.orderNotes = function () {
             parent.hiddenProperties.notes.splice(j - 1, 2, parent.hiddenProperties.notes[j], parent.hiddenProperties.notes[j - 1]);
         }
     }
-    $(document.getElementById('notedate' + parent.id)).html(new Date(parent.hiddenProperties.notes[0].date))
-    $(document.getElementById('notebody' + parent.id)).html(parent.hiddenProperties.notes[0].body)
+    parent.showNotes()
+}
 
+lead.prototype.showNotes = function () {
+    if (this.hiddenProperties && this.hiddenProperties.notes && this.hiddenProperties.notes[0]) {
+        $(document.getElementById('notedate' + this.id)).html(new Date(this.hiddenProperties.notes[0].date))
+        $(document.getElementById('notebody' + this.id)).html(this.hiddenProperties.notes[0].body)
+    }
 }
 
 lead.prototype.orderTasks = function () {
@@ -73,11 +78,15 @@ lead.prototype.orderTasks = function () {
             parent.hiddenProperties.tasks.splice(j - 1, 2, parent.hiddenProperties.tasks[j], parent.hiddenProperties.tasks[j - 1]);
         }
     }
-    $(document.getElementById('taskdate' + parent.id)).html(new Date(parent.hiddenProperties.tasks[0].date))
-    $(document.getElementById('taskbody' + parent.id)).html(parent.hiddenProperties.tasks[0].body)
-
+    parent.showTasks()
 }
-
+lead.prototype.showTasks = function () {
+    var parent = this
+    if (parent.hiddenProperties && parent.hiddenProperties.tasks && parent.hiddenProperties.tasks[0]) {
+        $(document.getElementById('taskdate' + parent.id)).html(new Date(parent.hiddenProperties.tasks[0].date))
+        $(document.getElementById('taskbody' + parent.id)).html(parent.hiddenProperties.tasks[0].body)
+    }
+}
 
 function note(raw) {
     if (raw.body) this.body = raw.body
@@ -86,20 +95,23 @@ function note(raw) {
 
 function task(raw) {
     if (raw.body) this.body = raw.body
-    if (raw['created-at']) this.date = new Date(raw['created-at'])
+    if (raw['due-at']) this.date = new Date(raw['due-at'])
 }
 
 lead.prototype.retrieveNotes = function () {
     var lead = this
     call('notes.php', { id: this.id, obj: StringJSON(this) }, function (obj) {
-        var rawNotes = ParseJSON(obj).data[0].note
-        lead.hiddenProperties.notes = []
-        if (rawNotes) {
-            if (rawNotes['created-at']) lead.hiddenProperties.notes.push(new note(rawNotes))
-            else rawNotes.forEach(function (raw) {
-                lead.hiddenProperties.notes.push(new note(raw))
-            })
-            lead.orderNotes()
+        var rawNotes = ParseJSON(obj).data[0]
+        if (rawNotes.note) {
+            rawNotes = rawNotes.note
+            lead.hiddenProperties.notes = []
+            if (rawNotes) {
+                if (rawNotes['created-at']) lead.hiddenProperties.notes.push(new note(rawNotes))
+                else rawNotes.forEach(function (raw) {
+                    lead.hiddenProperties.notes.push(new note(raw))
+                })
+                lead.orderNotes()
+            }
         }
     })
 }
@@ -112,10 +124,11 @@ lead.prototype.retrieveTasks = function () {
         lead.hiddenProperties.tasks = []
         if (taskSets) {
             taskSets.forEach(function (taskSet) {
-                if (taskSet.task['created-at']) lead.hiddenProperties.tasks.push(new task(taskSet))
-                else taskSet.task.forEach(function (tasker) {
-                    lead.hiddenProperties.tasks.push(new task(tasker))
-                })
+                if (taskSet.task)
+                    if (taskSet.task['created-at']) lead.hiddenProperties.tasks.push(new task(taskSet.task))
+                    else taskSet.task.forEach(function (tasker) {
+                        lead.hiddenProperties.tasks.push(new task(tasker))
+                    })
             })
             lead.orderTasks()
         }
@@ -178,9 +191,13 @@ lead.prototype.indexOfPhase = function (name) {
     }
 }
 
-
+lead.prototype.refreshBody = function () {
+    this.retrieveNotes()
+    this.retrieveTasks()
+}
 lead.prototype.show = function () {
     var parent = $(document.getElementById('accordion'))
+
 
     function createProgressBar(parent) {
         var dividerWidth = 0.3
@@ -211,14 +228,16 @@ lead.prototype.show = function () {
         progressBar += '</div>'
         return progressBar
     }
-
+    
+    
+    //******This is the wrapper for note and task date and body */
     function createContent(parent) {
         var content = '<div class="row">\
   <div class="col-sm-1"  style="overflow:hidden;height:20px">\
       <p>Next task:</p>\
     </div>\
     <div class="col-sm-1"  style="overflow:hidden;height:20px">\
-      <p id="taskdate' + parent.id + '">date</p>\
+      <p id="taskdate' + parent.id + '"></p>\
     </div>\
     <div class="col-sm-10" style="overflow:hidden;height:20px">\
       <p id="taskbody' + parent.id + '"></p>\
@@ -229,7 +248,7 @@ lead.prototype.show = function () {
       <p>Last Note:</p>\
     </div>\
     <div class="col-sm-1"  style="overflow:hidden;height:40px">\
-      <p id="notedate' + parent.id + '">date</p>\
+      <p id="notedate' + parent.id + '"></p>\
     </div>\
     <div class="col-sm-10" style="overflow:hidden;height:40px">\
       <p id="notebody' + parent.id + '"></p>\
@@ -243,7 +262,8 @@ lead.prototype.show = function () {
     <div class="panel-heading">\
        <div class="row">\
             <div class="col-sm-2">\
-                    <a href="https://legalmonkeys.highrisehq.com/companies/' + this.id + '" target="_blank">' + this.name + '</a>\
+                   <span><a href="https://legalmonkeys.highrisehq.com/companies/' + this.id + '" target="_blank">' + this.name + '</a></span>\
+      <span onClick="fromNumber(' + this.id + ').refreshBody()" >&#160;&#160;<img class="gb_6b" src="http://findicons.com/files/icons/1714/dropline_neu/128/view_refresh.png" style="max-width:16px;max-height:16px"></span>\
             </div>\
             <div class="col-sm-10">\
                     ' + createProgressBar(this) + '\
@@ -254,6 +274,7 @@ lead.prototype.show = function () {
     newPanel += '</div></div>'
 
     parent.append(newPanel)
-
+    this.showNotes()
+    this.showTasks()
     this.refreshPhaseBar()
 }

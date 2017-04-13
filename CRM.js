@@ -14,6 +14,23 @@ function logInOrOut(usr, pwd) {
     })
 }
 
+function sortByClosest() {
+    var parent = $(document.getElementById('accordion'))
+
+    parent.html('')
+    var leadsCopy = []
+    leads.forEach(function (Ld) {
+        leadsCopy.push(Ld)
+    })
+    for (Phi = leads[0].Phases.length - 1; Phi >= 0; Phi--) {
+        for (Ldi = leadsCopy.length - 1; Ldi >= 0; Ldi--) {
+            if (leadsCopy[Ldi] && leadsCopy[Ldi].Phases[Phi].end) {
+                leadsCopy[Ldi].show()
+                leadsCopy[Ldi] = undefined;
+            }
+        }
+    }
+}
 function daysBetween(one, another) {
     return Math.round(Math.abs((+one) - (+another)) / 8.64e7);
 }
@@ -49,7 +66,7 @@ function getLeads() {
         companies.forEach(function (company) {
             retrieveObject(company, function (objec) {
                 obj = ParseJSON(objec)
-                if (obj.data[0].obj) leads.push(new lead(company, obj.data[0].obj))
+                if (obj.data && obj.data[0] && obj.data[0].obj) leads.push(new lead(company, obj.data[0].obj))
                 else leads.push(new lead(company))
             })
         })
@@ -60,6 +77,29 @@ function getLeads() {
 function saveALL() {
     leads.forEach(function (lead) {
         lead.save()
+    })
+}
+
+function sortByNextFollowUp() {
+    var parent = $(document.getElementById('accordion'))
+    parent.html('')
+    var leadsCopy = []
+    leads.forEach(function (Ld) {
+        if (Ld && Ld.hiddenProperties && Ld.hiddenProperties.tasks && Ld.hiddenProperties.tasks[0] && Ld.hiddenProperties.tasks[0].date)
+            if (leadsCopy.length == 0) leadsCopy.push(Ld)
+            else {
+                this.found = false;
+                for (ldci = 0; ldci < leadsCopy.length && !this.found; ldci++) {
+                    if (Ld.hiddenProperties.tasks[0].date < leadsCopy[ldci].hiddenProperties.tasks[0].date) {
+                        leadsCopy.splice(ldci, 0, Ld)
+                        this.found = true
+                    }
+                }
+                if(!this.found)leadsCopy.push(Ld)
+            }
+    })
+    leadsCopy.forEach(function (lc) {
+        lc.show()
     })
 }
 
