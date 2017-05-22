@@ -1,4 +1,39 @@
 var leads = []
+var view
+
+
+
+var myDomObjs = {
+    leads: {
+        list: [],
+        clear: function () {
+        }
+    },
+    lead: function (options) {
+        var thisLead = this
+        if (options && options.data) this.data = options.data
+        options.data.dom = this
+        this.panel = new bsjs.panel({})
+        this.create = function () {
+            return {
+                html: thisLead.panel.create(), callback: function () {
+                    thisLead.title = new bsjs.grid({ addTo: thisLead.panel.heading })
+                    thisLead.title.addRows({ columns: [2, 10], rows: 2 })
+                    thisLead.title.rows[0].columns[0].main.set(thisLead.data.name)
+                    thisLead.title.rows[0].columns[1].main.set(thisLead.data.createProgressBar(thisLead.data))
+                    thisLead.title.main.jQ().css('margin-left', '0px')
+                    thisLead.title.main.jQ().css('margin-right', '0px')
+                }
+            }
+        }
+        if (options.addTo) options.addTo.add(this)
+    }
+}
+
+
+
+
+
 
 function lead(company, obj) {
     this.name = company.name
@@ -81,7 +116,7 @@ function lead(company, obj) {
     }
     if (!this.hiddenProperties) this.hiddenProperties = []
     if (!obj) this.createObj()
-    this.show()
+    // this.show()
     this.retrieveNotes()
     this.retrieveTasks()
     console.log(this)
@@ -263,20 +298,20 @@ lead.prototype.createProgressBar = function (parent) {
                 </div>'
     }
     parent.Phases.forEach(function (phase) {
-            //Below is the date picker appended to the beginning of each phase
-            progressBar += returnPortion(parent.id + ",'" + phase.name + "'", parent.id + phase.name, '')
-                //Below is the actual portion of the progress bar
-            progressBar += '<div class="progress-bar greyback" id="progressBar' + parent.id + phase.name + '"  role="progressbar" style="width:' + percent + '%"><span>' + phase.name + '</span><span id=par' + parent.id + phase.name + '></span></div>'
-        })
-        //Below is the last date picker
+        //Below is the date picker appended to the beginning of each phase
+        progressBar += returnPortion(parent.id + ",'" + phase.name + "'", parent.id + phase.name, '')
+        //Below is the actual portion of the progress bar
+        progressBar += '<div class="progress-bar greyback" id="progressBar' + parent.id + phase.name + '"  role="progressbar" style="width:' + percent + '%"><span>' + phase.name + '</span><span id=par' + parent.id + phase.name + '></span></div>'
+    })
+    //Below is the last date picker
     progressBar += returnPortion(parent.id, parent.id, ';right:10px')
-        //The last div ends the progress bar
+    //The last div ends the progress bar
     progressBar += '</div>'
     return progressBar
 }
 lead.prototype.show = function () {
     var parent = $(document.getElementById('accordion'))
-        //******This is the wrapper for note and task date and body */
+    //******This is the wrapper for note and task date and body */
     function createContent(parent) {
         var content = '<div class="row">\
   <div class="col-sm-1"  style="overflow:hidden;height:20px">\

@@ -14,12 +14,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!--My Javascript-->
     <script src="CRM.js"></script>
+    <script src="BootStrapAsJSobjects.js"></script>
     <script src="leadObj.js"></script>
-
+    <script src="reports.js"></script>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-            <div class="navbar-header"><img class="gb_6b" src="https://www.google.com/a/cpanel/legalmonkeys.com/images/logo.gif?service=google_default"
-                    style="max-width:144px;max-height:48px">
+            <div class="navbar-header"><img class="gb_6b" src="https://www.google.com/a/cpanel/legalmonkeys.com/images/logo.gif?service=google_default" style="max-width:144px;max-height:48px">
                 <a class="navbar-brand" href="#"></a>
             </div>
             <ul class="nav navbar-nav">
@@ -42,12 +42,11 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports
         <span class="caret"></span></a>
                     <ul class="dropdown-menu" id="tabs">
-                        <li><a onClick="clientConnectInfo('Highrise')">Overview of period</a></li>
-                        <li><a onClick="clientConnectInfo('LM')">Detail of period</a></li>
+                        <li><a onClick="overView()">Overview of period</a></li>
+                        <li><a onClick="detailLead()">Detail of each lead</a></li>
                         <li><a onClick="clientConnectInfo('Drews')">Payment history of period</a></li>
                         <li><a onClick="clientConnectInfo('Drews')">Overview of date</a></li>
                     </ul>
@@ -55,45 +54,20 @@
                 <li class="dropdown classified" style="display: none"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort By
         <span class="caret"></span></a>
                     <ul class="dropdown-menu" id="tabs">
+                        <li><a onClick="showAll()">All</a></li>
                         <li><a onClick="sortByClosest()">Closest to finish line.</a></li>
-                        <li><a onClick="compileCases()">Farthest behind.</a></li>
-                        <li><a onClick="compileCases()">Longest since last contact.</a></li>
                         <li><a onClick="sortByNextFollowUp()">Next follow up date.</a></li>
-                        <li><a onClick="compileCases()">Installs Only.</a></li>
+                        <li><a onClick="sortByTag('install')">Installs Only.</a></li>
+                        <li><a onClick="sortByTag('lost')">Lost</a></li>
+                        <li><a onClick="sortByTag('ARC first')">ARC First</a></li>
+                        <li><a onClick="sortByTag('sold')">SOLD</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
     </nav>
     <!--COLLAPSIBLE PANEL CONTAINER-->
-
-    <div class="panel-group" id="accordion">
-    </div>
-
-
-
-    <!-- Query Modal -->
-    <div id="QueryModal" db="none" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Query</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <textarea class="form-control" rows="5" id="query"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onClick=send(QueryModal)>Send</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <div class="panel-group" id="accordion"> </div>
 </body>
 
 </html>
