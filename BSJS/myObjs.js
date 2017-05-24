@@ -21,6 +21,7 @@ var myDomObjs = {
                     thisLead.title.addRows({ columns: [2, 10], rows: 2 })
                     thisLead.title.rows[0].columns[0].main.set(thisLead.data.name)
                     thisLead.title.rows[0].columns[1].main.set(thisLead.data.createProgressBar(thisLead.data))
+                    thisLead.data.refreshPhaseBar()
                     thisLead.title.main.jQ().css('margin-left', '0px')
                     thisLead.title.main.jQ().css('margin-right', '0px')
                 }
@@ -119,7 +120,6 @@ function lead(company, obj) {
     // this.show()
     this.retrieveNotes()
     this.retrieveTasks()
-    console.log(this)
 
     function phase(options) {
         this.name = options.name || null, this.start = options.start || null, this.end = options.end || null, this.targetDuration = options.targetDuration || null
@@ -250,7 +250,7 @@ lead.prototype.updateObj = function () {
         id: this.id
         , obj: StringJSON(this)
     }, function (obj) {
-        console.log(ParseJSON(obj))
+        //console.log(ParseJSON(obj))
     })
 }
 lead.prototype.createObj = function () {
@@ -258,7 +258,7 @@ lead.prototype.createObj = function () {
         id: this.id
         , obj: StringJSON(this)
     }, function (obj) {
-        console.log(ParseJSON(obj))
+        //console.log(ParseJSON(obj))
     })
 }
 lead.prototype.phaseFromName = function (name) {
@@ -285,7 +285,7 @@ lead.prototype.createProgressBar = function (parent) {
     var dividerWidth = 0.3
     var progressBar = '<div class="progress">'
     var percent = (100 - (dividerWidth * (parent.Phases.length + 1))) / parent.Phases.length
-
+    console.log('Phases', parent.Phases)
     function returnPortion(inside1, inside2, otherProperty) {
         return '<div class="progress-bar" role="progressbar" style="width:' + dividerWidth + '%" onClick="setPhaseStartDate(' + inside1 + ')">\
                     <div id="dateWrapper' + inside2 + '" style="display:none;float:left;position:absolute' + otherProperty + '"><input type="date" style="color:black" id="datePicker' + inside2 + '" >\
@@ -308,6 +308,34 @@ lead.prototype.createProgressBar = function (parent) {
     //The last div ends the progress bar
     progressBar += '</div>'
     return progressBar
+}
+
+lead.prototype.refreshPhaseBar = function () {
+    var t
+    if (view && view == "install") t = this.Install
+    else t = this
+    for (i = 1; i < t.Phases.length; i++) {
+        if (t.Phases[i].start) t.Phases[i - 1].end = t.Phases[i].start
+    }
+    for (i = 0; i < t.Phases.length; i++) {
+        var days = ""
+        var bar = document.getElementById('progressBar' + t.id + t.Phases[i].name)
+        var par = $(document.getElementById('par' + t.id + t.Phases[i].name))
+        if (!t.Phases[i].start) bar.className = "progress-bar greyback"
+        if (t.Phases[i].start && !t.Phases[i].end) {
+            days = t.Phases[i].targetDuration - daysBetween(new Date(), new Date(t.Phases[i].start))
+            if (days < 0) bar.className = "progress-bar progress-bar-danger progress-bar-striped active"
+            else bar.className = "progress-bar progress-bar-warning progress-bar-striped active"
+        }
+        if (t.Phases[i].start && t.Phases[i].end) {
+            days = t.Phases[i].targetDuration - daysBetween(new Date(t.Phases[i].end), new Date(t.Phases[i].start))
+            bar.className = "progress-bar progress-bar-success"
+        }
+        if (days) par.html('&#160&#160 ' + days)
+        else par.html('')
+        if (days < 0) par.css('color', 'red')
+        else par.css('color', 'black')
+    }
 }
 lead.prototype.show = function () {
     var parent = $(document.getElementById('accordion'))

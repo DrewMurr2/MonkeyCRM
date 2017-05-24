@@ -348,7 +348,7 @@ var BSJS = function (name) {
             }
         }
         this.create = function () {
-            return '<div ' + thisGrid.main.returnHTMLtag() + 'class="container"></div>'
+            return '<div ' + thisGrid.main.returnHTMLtag() + 'class="container" style="width:100%"></div>'
 
         }
         if (options.addTo) options.addTo.add(this)
@@ -363,3 +363,91 @@ var BSJS = function (name) {
     this.create()
     return this
 }
+
+
+
+
+function bsjsElement(options) {
+
+    var thisBSJSelement = this
+    this.tags = []
+    this.template = options.template
+    this.tagsArr = function (str) {
+        var arr = [];
+        str.replace(/{{([^}]*)}}/g, function (m) {
+            arr.push(m);
+        });
+        return arr;
+    }(options.template)
+    this.tagsArr.forEach(function (t) { var nTag = new bsjs.tag(); thisBSJSelement.tags.push(nTag); thisBSJSelement.tags[t.substring(2, t.length - 2)] = nTag })
+    this.create = function () {
+        console.log('thisTags', thisBSJSelement.tags)
+        if (thisBSJSelement.tags.main.element()) thisBSJSelement.tags.main.jQ().remove()
+        return {
+            html: function () {
+                var htm = thisBSJSelement.template
+                thisBSJSelement.tagsArr.forEach(function (tA) {
+                    htm = replaceAll(htm, tA, thisBSJSelement.tags[tA.substring(2, tA.length - 2)].returnHTMLtag())
+                })
+                return htm
+            }()
+            , callback: function () {
+                thisBSJSelement.tags.forEach(function (tg) {
+                    // tg.contents.forEach(function (cnt) {
+                    //     tg.add(cnt)
+                    // })
+                })
+            }
+        }
+    }
+    if (options.addTo) options.addTo.add(this)
+
+    return this
+}
+
+function inheritsBsjsElement(obj, options) {
+
+    var thisBSJSelement = obj
+    obj.tags = []
+    obj.template = options.template
+    obj.tagsArr = function (str) {
+        var arr = [];
+        str.replace(/{{([^}]*)}}/g, function (m) {
+            arr.push(m);
+        });
+        return arr;
+    }(options.template)
+    obj.tagsArr.forEach(function (t) { var nTag = new bsjs.tag(); thisBSJSelement.tags.push(nTag); thisBSJSelement.tags[t.substring(2, t.length - 2)] = nTag })
+    obj.create = function () {
+        console.log('thisTags', thisBSJSelement.tags)
+        if (thisBSJSelement.tags.main.element()) thisBSJSelement.tags.main.jQ().remove()
+        return {
+            html: function () {
+                var htm = thisBSJSelement.template
+                thisBSJSelement.tagsArr.forEach(function (tA) {
+                    htm = replaceAll(htm, tA, thisBSJSelement.tags[tA.substring(2, tA.length - 2)].returnHTMLtag())
+                })
+                return htm
+            }()
+            , callback: function () {
+                thisBSJSelement.tags.forEach(function (tg) {
+                    // tg.contents.forEach(function (cnt) {
+                    //     tg.add(cnt)
+                    // })
+                })
+            }
+        }
+    }
+    if (options.addTo) options.addTo.add(obj)
+}
+
+function replaceAll(str, find, replace) {
+    function escapeRegExp(str) {
+        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    }
+    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+
+
+

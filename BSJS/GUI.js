@@ -29,6 +29,42 @@ var reportsDropDown_Payment = new bsjs.nav.dropDownItem({
 })
 
 
+var navBar = new bsjs.nav.bar({
+    addTo: bsjs.body,
+    title: {
+        contents:
+        ['Client Connect CRM', new bsjs.img('https://www.google.com/a/cpanel/legalmonkeys.com/images/logo.gif?service=google_default')]
+    },
+    left: {
+        contents: [new bsjs.nav.dropDownGroup({
+            title: 'Reports',
+            contents: [new bsjs.nav.dropDownItem({
+                addTo: reportsDropDown.body
+                , title: 'Overview of period'
+                , onClick: MyModal.show
+            })]
+        })]
+    }
+})
+
+
+
+
+
+var newbsjs = new bsjsElement({
+    template: '\
+<div {{main}} class="panel panel-default" >\
+  <div {{heading}} class="panel-heading">Panel Heading</div>\
+    <div {{body}} class="panel-body" ></div >\
+    <div {{footer}} class="panel-footer">Panel Footer</div>\
+</div >\
+', addTo: bsjs.body
+})
+
+
+
+
+
 
 
 var sortDropDown = new bsjs.nav.dropDownGroup({
@@ -80,11 +116,11 @@ var sortDropDown_Sold = new bsjs.nav.dropDownItem({
     , onClick: MyModal.show
 })
 
-getLeads(function () {
-    leads.forEach(function (l) {
-        l.domObj = new myDomObjs.lead({ addTo: bsjs.body, data: l })
-    })
-})
+// getLeads(function () {
+//     leads.forEach(function (l) {
+//         l.domObj = new myDomObjs.lead({ addTo: bsjs.body, data: l })
+//     })
+// })
 
 
 
