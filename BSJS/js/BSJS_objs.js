@@ -34,18 +34,14 @@ BSJS.nav = {
 '
         var thisDropDownGroup = BSJS.inherit(this, new BSJS.obj(options))
         return this
-
-
     }
     , dropDownItem: function (options) {
         if (!options) options = {}
         options.template = ' <li {{main.returnHTMLtag}}><a {{body.returnHTMLtag}} href="#"></a></li>'
         var thisDropDownItem = BSJS.inherit(this, new BSJS.obj(options))
         return this
-
     }
 }
-
 BSJS.panel = function (options) {
     if (!options) options = {}
     options.template = '\
@@ -56,7 +52,6 @@ BSJS.panel = function (options) {
 </div >\
 '
     var thisPanel = BSJS.inherit(this, new BSJS.obj(options))
-
     this.primary = function () {
         thisPanel.tags.main.element().className = 'panel panel-default'
     }
@@ -65,16 +60,45 @@ BSJS.panel = function (options) {
     }
     return this
 }
-
 BSJS.span = function (options) {
     if (!options || jQuery.type(options) === "string") {
         options = {
             text: options
         }
-    } else {
+    }
+    else {
         options.text = ''
     }
     options.template = '<span {{main.returnHTMLtag}}>' + options.text + '</span>'
     var thisPanel = BSJS.inherit(this, new BSJS.obj(options))
     return this
 }
+BSJS.datePicker = function (options) {
+    var thisdatePicker = this
+    if (!options) options = {}
+    this.options = options
+    this.options.hideCal = {
+        onClick: function () {
+            thisdatePicker.main.hide()
+        }
+    }
+    this.options.saveDate = {
+        onClick: thisdatePicker.options.onSave
+        , params: {
+            value: function () {
+                return thisdatePicker.calendar.element().value
+            }
+        }
+    }
+    this.options.template = '\
+<div id="{{main.id}}" style="float:left;position:absolute">\
+    <input type="date" style="color:black" id="{{calendar.id}}" >\
+    <div style="background-color:grey" >\
+        <span {{hideCal.returnHTMLtag}} style="background-color:grey" >cancel</span>\
+        <span  {{saveDate.returnHTMLtag}} style="background-color:grey;float:right" >save</span>\
+    </div >\
+</div>'
+    var thisdatePicker = BSJS.inherit(this, new BSJS.obj(this.options))
+    return this
+}
+BSJS.progressbar = function (options) {}

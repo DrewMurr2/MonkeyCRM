@@ -5,7 +5,12 @@ var BSJS = {
     },
     functions: {},
     objects: [],
-
+    dataConnections: [],
+    addDataConnection: function (dc) {
+        dc.dataConnectionIndex = BSJS.dataConnections.length
+        BSJS.dataConnections[BSJS.dataConnections.length] = dc
+    },
+    objectsWithDataConnection: [],
     inherit: function (obj, obj2) {
         for (var propertyName in obj2) {
             obj[propertyName] = obj2[propertyName]
