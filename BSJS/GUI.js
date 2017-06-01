@@ -68,6 +68,9 @@ var dp = new BSJS.datePicker({
         console.log(d)
     }
 })
+
+var obb = { h: 1 }
+
 var newGrid = new BSJS.grid({
     addTo: BSJS.main
     , rows: [{
@@ -80,28 +83,12 @@ var newGrid = new BSJS.grid({
     }, {
         columns: [10, {
             width: 2
-            , main: 'end'
+            , main: '<<:obb.h>>'
         }]
     }]
 })
 
-this.editItem = function (objIndex, itemIndx, colname, rowNum) {
-    if (document.getElementById('obj_' + objIndex + '_edit_' + itemIndx).style.display == "none") {
-        $(document.getElementById('obj_' + objIndex + '_edit_' + itemIndx)).show()
-        $(document.getElementById('obj_' + objIndex + '_td_' + itemIndx)).hide()
-        setTimeout(function () {
-            window.onclick = function (event) {
-                if (event.target != document.getElementById('obj_' + objIndex + '_edit_' + itemIndx)) {
-                    thisTable.saveItem(colname, rowNum, document.getElementById('obj_' + objIndex + '_edit_' + itemIndx).value)
-                }
-            }
-        }, 100)
-    }
-}
-function edita(l, m) {
-    $(l).hide()
-    $(m).show()
-}
+
     //var panel = new BSJS.panel({
     //  addTo: BSJS.tags.main
     //    })
