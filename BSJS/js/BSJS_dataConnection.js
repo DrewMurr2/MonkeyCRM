@@ -1,6 +1,7 @@
 
 BSJS.returnDataConnection = function (options) {
     var tipe = jQuery.type(options)
+    if ($.isNumeric(options)) tipe = 'number'
     switch (tipe) {
         case "object":
             return new BSJS.dataConnection(options)
@@ -30,8 +31,21 @@ BSJS.dataConnection = function (options) {
     this.marker = function () {
         return '<<' + dc.index + '>>'
     }
+    this.prevVal = ''
+    this.setPrevVal = function () {
+        dc.prevVal = dc.val().toString()
+        return true
+    }
+
+    this.hasChanged = function () {
+        if (dc.prevVal == dc.val()) return false
+        else return dc.setPrevVal()
+    }
+
     this.val = function () {
-        return dc.obj[dc.prop]
+        var vall = 'undefined'
+        if (dc && dc.obj && dc.obj[dc.prop]) vall = dc.obj[dc.prop]
+        return vall
     }
     return this
 }

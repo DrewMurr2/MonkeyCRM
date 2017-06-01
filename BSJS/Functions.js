@@ -25,17 +25,7 @@ function StringJSON(obj) {
     return replaceAll(str, "&", "AND")
 }
 
-function replaceAll(str, find, replace) {
-    function escapeRegExp(str) {
-        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-    }
-    if (jQuery.type(find) === "string") find = [find]
-    find.forEach(function (f) {
-        str = str.replace(new RegExp(escapeRegExp(f), 'g'), replace)
-    })
 
-    return str;
-}
 
 function isString(myVar) {
     return (typeof myVar === 'string' || myVar instanceof String) || false

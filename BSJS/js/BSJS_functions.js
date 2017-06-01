@@ -29,3 +29,15 @@ BSJS.functions.returnObj = function (dataArr) {
     }
     return newVar
 }
+
+BSJS.functions.replaceElement = function refresh(domEl, html) {
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    var a = domEl.parentNode.replaceChild(template.content.firstChild, domEl);
+}
+
+BSJS.functions.htmlToElement = function (html) {
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstChild;
+}

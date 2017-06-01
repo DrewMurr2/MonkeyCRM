@@ -32,48 +32,52 @@ BSJS.obj = function (options) {
     })
 
 
-    // str.replace(/<<([^}]*)>>/g, function (m) {
-    //     var tgr = m.substring(2, m.length - 2).split("&")
-    //     thisBSJSelement.convertDataConnection(tgr[0])
+    this.updateDataConnectionsArr = function () {
+        var arr = [];
+        thisBSJSelement.template.replace(/<<([^}]*)>>/g, function (m) {
+            var dc = BSJS.returnDataConnection(m.substring(2, m.length - 2))
+            thisBSJSelement.template = BSJS.functions.replaceAll(thisBSJSelement.template, m, dc.marker())
+            if (arr.indexOf(dc) == -1) arr.push(dc)
+        });
+        if (arr.length > 0 && BSJS.objectsWithDataConnection.indexOf(thisBSJSelement) == -1) BSJS.objectsWithDataConnection.push(thisBSJSelement)
+        return arr;
+    }
 
-    // });
+    this.dataConnectionsArr = this.updateDataConnectionsArr()
 
-    // this.convertDataConnection = function (dcstring) { //input <<int&prop>> or <<obj.obj.obj&prop>> Output: <<int&prop>>
-    //     this.newdcString = ''
+    this.hasChanged = function () {
+        var changed = false
+        thisBSJSelement.dataConnectionsArr.forEach(function (dca) {
+            if (dca.hasChanged()) changed = true
+        })
+        return changed
+    }
 
-
-
-
-    //     return this.newdcString
-
-    // }
-
+    this.refresh = function () {
+        if (thisBSJSelement.main.element()) {
+            var crt = thisBSJSelement.returnCreateObj()
+            BSJS.functions.replaceElement(thisBSJSelement.main.element(), crt.html)
+            crt.callback()
+        }
+    }
 
 
     this.create = function () {
         if (thisBSJSelement.tags.main.element()) thisBSJSelement.tags.main.jQ().remove()
-
-
-        // this.dataConnectionArr = function (str) {
-        //     var dcarr = [];
-        //     var dcuniqueArr = [];
-        //     str.replace(/<<([^}]*)>>/g, function (m) {
-        //         var tgr = m.substring(2, m.length - 2).split("&")
-        //         if (BSJS.indexOf(tgr[0]) == -1) {
-        //             tgr.unique = 1
-        //             uniqueArr.push(tgr[0])
-        //         }
-        //         arr.push(tgr)
-        //     });
-        //     return arr;
-        // }(options.template)
+        return thisBSJSelement.returnCreateObj()
+    }
 
 
 
 
+    this.returnCreateObj = function () {
+        thisBSJSelement.dataConnectionsArr = thisBSJSelement.updateDataConnectionsArr()
         return {
             html: function () {
                 var htm = thisBSJSelement.template
+                thisBSJSelement.dataConnectionsArr.forEach(function (dcr) {
+                    htm = BSJS.functions.replaceAll(htm, dcr.marker(), dcr.val())
+                })
                 thisBSJSelement.tagsArr.forEach(function (tA) {
                     var thisThing = thisBSJSelement.tags[tA[0]][tA[1]]
                     var replacement = function () {
@@ -95,6 +99,7 @@ BSJS.obj = function (options) {
             }
         }
     }
+
     if (options.addTo) options.addTo.add(this)
     return this
 }

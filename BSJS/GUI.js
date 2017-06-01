@@ -59,9 +59,9 @@ var navbar = new BSJS.nav.bar({
         })]
     })]
 })
-API.getLeads(MyObjs.leads, function () {
-    alert('Leads Loaded')
-})
+// API.getLeads(MyObjs.leads, function () {
+//     alert('Leads Loaded')
+// })
 var dp = new BSJS.datePicker({
     onSave: function (params) {
         alert('params picked:' + params.value())
