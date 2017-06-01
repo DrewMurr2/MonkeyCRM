@@ -73,7 +73,7 @@ BSJS.tag = function (options) {
             if (options.create) thisTag.add(options)
             if (options.contents) thisTag.contents = options.contents
             if (options.params) thisTag.params = options.params
-            if (options.dataConnection) thisTag.add(new BSJS.span(returnDataConnection(options.dataConnection).marker()))
+            if (options.dataConnection) thisTag.add(new BSJS.span(BSJS.returnDataConnection(options.dataConnection).marker()))
 
     }
     return this

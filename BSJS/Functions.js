@@ -16,13 +16,13 @@ var Functions = {
 }
 
 function ParseJSON(str) {
-    var newStr = replaceAll(replaceAll(str, '"{', '{'), '}"', '}')
+    var newStr = BSJS.functions.replaceAll(BSJS.functions.replaceAll(str, '"{', '{'), '}"', '}')
     return JSON.parse(newStr)
 }
 
 function StringJSON(obj) {
     var str = JSON.stringify(obj)
-    return replaceAll(str, "&", "AND")
+    return BSJS.functions.replaceAll(str, "&", "AND")
 }
 
 

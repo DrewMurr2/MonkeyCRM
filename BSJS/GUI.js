@@ -18,7 +18,7 @@ var navbar = new BSJS.nav.bar({
         })]
     }), new BSJS.nav.dropDownGroup({
         var: 'View'
-        , title: 'View'
+        , title: '<<View.tit>>'
         , body: [new BSJS.nav.dropDownItem({
             body: 'All'
             , onClick: function () {
@@ -59,9 +59,9 @@ var navbar = new BSJS.nav.bar({
         })]
     })]
 })
-// API.getLeads(MyObjs.leads, function () {
-//     alert('Leads Loaded')
-// })
+API.getLeads(MyObjs.leads, function () {
+    alert('Leads Loaded')
+})
 var dp = new BSJS.datePicker({
     onSave: function (params) {
         alert('params picked:' + params.value())
@@ -73,7 +73,7 @@ var newGrid = new BSJS.grid({
     , rows: [{
         columns: [{
             width: 1
-            , main: "greek"
+            , main: '<span id="startSpan" onClick="edita(startSpan,inputID)">greek</span><span><input type="text" style="display:none;position:absolute"  id="inputID" value="greek"></span>'
         }, 5, 6]
     }, {
         columns: [4, 4, 4]
@@ -84,6 +84,24 @@ var newGrid = new BSJS.grid({
         }]
     }]
 })
+
+this.editItem = function (objIndex, itemIndx, colname, rowNum) {
+    if (document.getElementById('obj_' + objIndex + '_edit_' + itemIndx).style.display == "none") {
+        $(document.getElementById('obj_' + objIndex + '_edit_' + itemIndx)).show()
+        $(document.getElementById('obj_' + objIndex + '_td_' + itemIndx)).hide()
+        setTimeout(function () {
+            window.onclick = function (event) {
+                if (event.target != document.getElementById('obj_' + objIndex + '_edit_' + itemIndx)) {
+                    thisTable.saveItem(colname, rowNum, document.getElementById('obj_' + objIndex + '_edit_' + itemIndx).value)
+                }
+            }
+        }, 100)
+    }
+}
+function edita(l, m) {
+    $(l).hide()
+    $(m).show()
+}
     //var panel = new BSJS.panel({
     //  addTo: BSJS.tags.main
     //    })

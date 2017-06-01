@@ -93,7 +93,7 @@ var MyObjs = {
                 rows: [{
                     columns: [{
                         width: 2
-                        , main: thisLead.name + '2'
+                        , main: { dataConnection: { obj: thisLead, prop: 'name' } }
                     }, 8, {
                         width: 2
                         , main: function () {

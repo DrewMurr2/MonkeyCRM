@@ -28,8 +28,9 @@ BSJS.dataConnection = function (options) {
     BSJS.dataConnections[BSJS.dataConnections.length] = dc
     dc.obj = options.obj
     dc.prop = options.prop
+    dc.twoWay = false
     this.marker = function () {
-        return '<<' + dc.index + '>>'
+        return '<<' + (dc.twoWay ? ':' : '') + dc.index + '>>'
     }
     this.prevVal = ''
     this.setPrevVal = function () {

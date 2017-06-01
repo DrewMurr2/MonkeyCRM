@@ -46,9 +46,9 @@ BSJS.panel = function (options) {
     if (!options) options = {}
     options.template = '\
 <div {{main.returnHTMLtag}} class="panel panel-default" >\
-  <div {{heading.returnHTMLtag}} class="panel-heading">Panel Heading</div>\
+  <div {{heading.returnHTMLtag}} class="panel-heading"></div>\
     <div {{body.returnHTMLtag}} class="panel-body" ></div >\
-    <div {{footer.returnHTMLtag}} class="panel-footer">Panel Footer</div>\
+    <div {{footer.returnHTMLtag}} class="panel-footer"></div>\
 </div >\
 '
     var thisPanel = BSJS.inherit(this, new BSJS.obj(options))
@@ -101,4 +101,5 @@ BSJS.datePicker = function (options) {
     var thisdatePicker = BSJS.inherit(this, new BSJS.obj(this.options))
     return this
 }
-BSJS.progressbar = function (options) {}
+
+BSJS.progressbar = function (options) { }
