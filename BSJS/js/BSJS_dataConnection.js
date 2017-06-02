@@ -34,8 +34,10 @@ BSJS.dataConnection = function (options) {
         return '<<' + (dc.twoWay ? ':' : '') + dc.index + '>>'
     }
     this.prevVal = ''
+
     this.setPrevVal = function () {
         dc.prevVal = dc.val().toString()
+        if (dc.onSave) dc.onSave()
         return true
     }
 

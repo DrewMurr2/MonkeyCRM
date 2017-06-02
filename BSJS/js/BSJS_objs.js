@@ -103,3 +103,94 @@ BSJS.datePicker = function (options) {
 }
 
 BSJS.progressbar = function (options) { }
+
+
+BSJS.objectWorker = function (options) {
+    this.obj = options.obj
+    options.heading = '<h1>' + (options.name ? options.name : 'Object') + '</h1>'
+    options.template = '\
+<div {{main.returnHTMLtag}} class="panel panel-default" >\
+  <div {{heading.returnHTMLtag}} class="panel-heading"></div>\
+    <div {{body.returnHTMLtag}} class="panel-body" ></div >\
+</div >\
+'
+    options.body = []
+
+    function decipher(obj) {
+        for (var propertyName in obj) {
+            var tipe = jQuery.type(obj[propertyName])
+            switch (tipe) {
+                case 'object':
+                    options.body.push(new BSJS.objectWorker({ obj: obj[propertyName], name: propertyName }))
+                    break;
+                case 'string':
+                    options.body.push(new BSJS.stringProperty({ property: obj[propertyName], name: propertyName }))
+                    break;
+                case 'date':
+                    options.body.push(new BSJS.dateProperty({ property: obj[propertyName], name: propertyName }))
+                    break;
+                case 'array':
+                    options.body.push(new BSJS.arrayProperty({ property: obj[propertyName], name: propertyName }))
+                    break;
+                case 'boolean':
+                    options.body.push(new BSJS.booleanProperty({ property: obj[propertyName], name: propertyName }))
+                    break;
+            }
+        }
+    } (this.obj)
+
+    var thisObjectWorker = BSJS.inherit(this, new BSJS.obj(options))
+
+    return this
+
+}
+
+BSJS.arrayProperty = function (options) {
+    this.arr = options.property
+    options.heading = '<h1>' + (options.name ? options.name : 'Array') + '</h1>'
+    options.template = '\
+<div {{main.returnHTMLtag}} class="panel panel-default" >\
+  <div {{heading.returnHTMLtag}} class="panel-heading"></div>\
+    <div {{body.returnHTMLtag}} class="panel-body" ></div >\
+</div >\
+'
+    options.body = []
+
+
+    this.arr.forEach(function (a) {
+        var tipe = jQuery.type(a)
+        switch (tipe) {
+            case 'object':
+                options.body.push(new BSJS.objectWorker({ obj: a }))
+                break;
+            case 'string':
+                options.body.push(new BSJS.stringProperty({ property: a }))
+                break;
+            case 'date':
+                options.body.push(new BSJS.dateProperty({ property: a }))
+                break;
+            case 'array':
+                options.body.push(new BSJS.arrayProperty({ property: a }))
+                break;
+            case 'boolean':
+                options.body.push(new BSJS.booleanProperty({ property: a }))
+                break;
+        }
+    })
+    var thisObjectWorker = BSJS.inherit(this, new BSJS.obj(options))
+
+    return this
+}
+
+
+BSJS.stringProperty = function (options) {
+    this.str = options.property
+    options.name = (options.name || 'String')
+    options.template = '\
+    <span>'+ options.name + ':</span><span {{body.returnHTMLtag}}></span>'
+    options.body = new BSJS.dataConnection({ obj: '', prop: '', twoWay: true })
+
+    var thisObjectWorker = BSJS.inherit(this, new BSJS.obj(options))
+
+    return this
+}
