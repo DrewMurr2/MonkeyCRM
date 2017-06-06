@@ -4,7 +4,7 @@ var options = {
     FirmName: 'My Firm',
     FirmID: '',
     Password: '',
-    UseBothCaseManager: 'false',
+    UseBothCaseManager: '1/1/1970',
     FirstCaseManager: 1,
     SecondCaseManager: 2,
     SputnikVersion: "3.51.0",
@@ -52,7 +52,7 @@ var panel = new BSJS.panel({
                     , main: 'Notify both case managers:'
                 }, {
                     width: 2
-                    , main: new BSJS.dataConnection({ obj: options, prop: 'UseBothCaseManager', twoWay: true, type: 'boolean' }).marker()
+                    , main: new BSJS.dataConnection({ obj: options, prop: 'UseBothCaseManager', twoWay: true, type: 'date' }).marker()
                 }, 1]
         },
         {

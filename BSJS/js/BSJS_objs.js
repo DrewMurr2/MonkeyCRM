@@ -78,7 +78,7 @@ BSJS.datePicker = function (options) {
     if (!options) options = {}
     this.options = options
     this.options.hideCal = {
-        onClick: function () {
+        onClick: thisdatePicker.options.onHide || function () {
             thisdatePicker.main.hide()
         }
     }
